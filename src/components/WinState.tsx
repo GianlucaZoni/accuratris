@@ -1,6 +1,6 @@
 import { Player } from "../lib/types"
 
-export function handleWinState(cellState: Player | null) {
+export function handleWinState(cellState: (null | Player)[]) {
   const winningLines = [
     // Horizontal
     [0, 1, 2],
