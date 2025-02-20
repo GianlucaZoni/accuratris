@@ -28,7 +28,7 @@ export function Board() {
   }
 
   const historyList = history.map((_, move) => {
-    const textDescription = move > 0 ? "Travel to Turn " + { move } : "Travel to Game Start"
+    const textDescription = move > 0 ? `Travel to Turn ${move}` : "Travel to Game Start"
 
     return (
       <li key={move}>
@@ -70,7 +70,8 @@ export function Board() {
         ))}
       </div>
       <div className={styles.winnerStatus}>{winnerStatus}</div>
-      <div className="history">
+      <div className={styles.history}>
+        <h3>Time Machine</h3>
         <ol>{historyList}</ol>
       </div>
     </>
