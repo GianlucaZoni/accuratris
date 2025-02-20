@@ -1,0 +1,16 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 3em;
+  text-align: center;
+}
+
+.controls {
+  padding: 1rem;
+}
