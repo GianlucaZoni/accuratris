@@ -1,14 +1,16 @@
 //import {useState} from 'react';
-import './Cell.css';
+import styles from "./Cell.module.css"
+import { Player } from "../lib/types"
 
-export function Cell({className, cellValue, onCellClick}: {className: string, cellValue: string, onCellClick: () => void}) {
+interface CellProps {
+  cellValue: Player | null
+  onCellClick: () => void
+}
 
-    /* const [cellValue, setCellValue] = useState(null);
-
-    function handleClick() {
-        //setCellValue(cellValue === 'X' ? 'O' : 'X');
-        setCellValue('X');
-    } */
-
-    return  <div className={`cell ${className}`} onClick={onCellClick}> {cellValue} </div>
+export function Cell({ cellValue, onCellClick }: CellProps) {
+  return (
+    <div className={styles.cell} onClick={onCellClick}>
+      {cellValue}
+    </div>
+  )
 }

@@ -1,18 +1,18 @@
 //import { useState } from 'react'
-import "./App.css";
+import styles from "./App.module.css"
 
-import { Board } from "./components/Board";
+import { Board } from "./components/Board"
 
 function App() {
   return (
     <>
-      <div className="wrapper">
+      <div className={styles.wrapper}>
         <h1>Tic Tac Toe</h1>
         <Board />
-        <div className="controls">Coming Soon: Undo, Retry</div>
+        <div className={styles.controls}>Coming Soon: Undo, Retry</div>
       </div>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
