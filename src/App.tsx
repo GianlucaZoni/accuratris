@@ -9,7 +9,11 @@ function App() {
       <div className={styles.wrapper}>
         <h1>Tic Tac Toe</h1>
         <Board />
-        <div className={styles.controls}>Coming Soon: Undo, Retry</div>
+        <div className={styles.controls}>
+          <div>Undo</div>
+          <div> | </div>
+          <div>Retry</div>
+        </div>
       </div>
     </>
   )

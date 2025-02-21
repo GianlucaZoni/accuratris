@@ -5,75 +5,70 @@ import { Cell } from "./Cell"
 import { handleWinState } from "./WinState"
 import { Player } from "../lib/types"
 import { setFaviconWithChar } from "../lib/setFaviconWithChar"
+import { PlayerMove } from "../lib/types"
 
 export function Board() {
-  //const [cellState, setCellState] = useState<(null | Player)[]>(Array(9).fill(null))
-  const [history, setHistory] = useState<(null | Player)[][]>([Array(9).fill(null)])
+  const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
+  const [currentMove, setCurrentMove] = useState<number>(0)
 
-  const [currentMove, setCurrentMove] = useState(0)
-  const isXTurn = currentMove % 2 === 0
-  //const [isXTurn, setIsXTurn] = useState(true)
-
-  function handleGame(newCellState: (null | Player)[]) {
-    //const nextMove: (null | Player)[] = [...cellState.slice(0, currentMove + 1), newCellState]
-    const nextMove = [...history.slice(0, currentMove + 1), newCellState]
-    setHistory(nextMove)
-    setCurrentMove(nextMove.length - 1)
-    //setIsXTurn(!isXTurn)
-  }
-
-  function timeTravelTo(move: number) {
-    setCurrentMove(move)
-    //setIsNext(nextTurn%2===0)
-  }
-
-  const historyList = history.map((_, move) => {
-    const textDescription = move > 0 ? `Travel to Turn ${move}` : "Travel to Game Start"
-
-    return (
-      <li key={move}>
-        <button onClick={() => timeTravelTo(move)}>{textDescription}</button>
-      </li>
-    )
+  const boardCells: (null | Player)[] = Array(9).fill(null)
+  playerMoves.map((move) => {
+    boardCells[move.pos] = move.player
   })
+
+  //const currentMove = playerMoves.length
+  const isXTurn = currentMove % 2 === 0
+
+  function timeTravelTo(moveIndex: number) {
+    setCurrentMove(moveIndex)
+    setPlayerMoves(playerMoves.slice(0, moveIndex))
+  }
 
   useEffect(() => {
     setFaviconWithChar(isXTurn ? "❌" : "⭕")
   }, [isXTurn])
 
-  function handleState(index: number) {
-    const currentCells = history[currentMove]
-    /* if (history[index] !== null || handleWinState(currentCells)) {
-      return
-    } */
-    if (currentCells[index] !== null || handleWinState(currentCells)) {
-      return
+  function handleState(cellPosition: number) {
+    if (boardCells[cellPosition] !== null || winner || isDraw) return
+    const currentPlayer: Player = isXTurn ? "X" : "O"
+
+    const currentPlayerMove = {
+      pos: cellPosition,
+      player: currentPlayer,
     }
-    //const history = cellState()
-    const newCellState = [...currentCells]
-    newCellState[index] = isXTurn ? "X" : "O"
-    handleGame(newCellState)
-    /* setCellState(newCellState)
-    setIsXTurn(!isXTurn) */
+
+    setPlayerMoves([...playerMoves, currentPlayerMove])
+    setCurrentMove(currentMove + 1)
   }
 
-  const currentCells = history[currentMove]
-  const winner = handleWinState(currentCells)
-  const isDraw = !winner && currentCells.every((cell) => cell !== null)
+  const winner = handleWinState(boardCells)
+  const isDraw = !winner && boardCells.every((cell) => cell !== null)
   const winnerStatus = winner ? `Player ${winner} wins!` : isDraw ? "It's a draw!" : null
 
   return (
     <>
       <div className={styles.board}>
-        {currentCells.map((cellValue, index) => (
-          <Cell key={index} cellValue={cellValue} onCellClick={() => handleState(index)} />
+        {boardCells.map((playerMove, index) => (
+          <Cell key={index} cellValue={playerMove} onCellClick={() => handleState(index)} />
         ))}
       </div>
       <div className={styles.winnerStatus}>{winnerStatus}</div>
       <div className={styles.history}>
         <h3>Time Machine</h3>
-        <ol>{historyList}</ol>
+        <ol>
+          {playerMoves.map((move, moveIndex) => (
+            <li key={moveIndex}>
+              <button onClick={() => timeTravelTo(moveIndex)}>
+                {moveIndex > 0
+                  ? `Travel to Turn ${moveIndex} in cell ${move.pos} by ${move.player}`
+                  : `Travel to Game Start`}
+              </button>
+            </li>
+          ))}
+        </ol>
       </div>
+
+      <pre>{JSON.stringify({ playerMoves, currentMove, boardCells }, null, 2)}</pre>
     </>
   )
 }
