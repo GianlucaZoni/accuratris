@@ -9,7 +9,7 @@ import { PlayerMove } from "../lib/types"
 
 export function Board() {
   const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
-  const [currentMove, setCurrentMove] = useState<number>(0)
+  //const [currentMove, setCurrentMove] = useState<number>(0)
 
   const boardCells: (null | Player)[] = Array(9).fill(null)
   playerMoves.map((move) => {
@@ -17,10 +17,11 @@ export function Board() {
   })
 
   //const currentMove = playerMoves.length
-  const isXTurn = currentMove % 2 === 0
+  //const isXTurn = currentMove % 2 === 0
+  const isXTurn = playerMoves.length % 2 === 0
 
   function timeTravelTo(moveIndex: number) {
-    setCurrentMove(moveIndex)
+    //setCurrentMove(moveIndex)
     setPlayerMoves(playerMoves.slice(0, moveIndex))
   }
 
@@ -38,7 +39,7 @@ export function Board() {
     }
 
     setPlayerMoves([...playerMoves, currentPlayerMove])
-    setCurrentMove(currentMove + 1)
+    //setCurrentMove(currentMove + 1)
   }
 
   const winner = handleWinState(boardCells)
@@ -59,16 +60,14 @@ export function Board() {
           {playerMoves.map((move, moveIndex) => (
             <li key={moveIndex}>
               <button onClick={() => timeTravelTo(moveIndex)}>
-                {moveIndex > 0
-                  ? `Travel to Turn ${moveIndex} in cell ${move.pos} by ${move.player}`
-                  : `Travel to Game Start`}
+                {`Travel to Turn ${moveIndex + 1} in cell ${move.pos} by ${move.player}`}
               </button>
             </li>
           ))}
         </ol>
       </div>
 
-      <pre>{JSON.stringify({ playerMoves, currentMove, boardCells }, null, 2)}</pre>
+      <pre>{JSON.stringify({ playerMoves, boardCells }, null, 2)}</pre>
     </>
   )
 }
