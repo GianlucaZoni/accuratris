@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { range } from "lodash"
 
 import styles from "./Board.module.css"
@@ -6,18 +6,21 @@ import { Cell } from "./Cell"
 import { calculateWinner } from "../lib/calculateWinner"
 import { Player } from "../lib/types"
 import { setFaviconWithChar } from "../lib/setFaviconWithChar"
-import { PlayerMove } from "../lib/types"
-import { storePlayerMoves, loadPlayerMoves } from "../lib/localStorage"
+//import { PlayerMove } from "../lib/types"
+//import { storePlayerMoves, loadPlayerMoves } from "../lib/localStorage"
+import { useLocalStorage } from "../hooks/useLocalStorage"
 
 export function Board() {
   //const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
-  const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>(() => {
+  /* const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>(() => {
     return loadPlayerMoves("playerMoves") || []
   })
 
   useEffect(() => {
     storePlayerMoves("playerMoves", playerMoves)
-  }, [playerMoves])
+  }, [playerMoves]) */
+
+  const [playerMoves, setPlayerMoves] = useLocalStorage("playerMoves", [])
 
   const updatedBoardCells = playerMoves.reduce<(null | Player)[]>(
     (acc, move) => {

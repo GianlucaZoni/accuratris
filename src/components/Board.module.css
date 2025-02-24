@@ -2,6 +2,8 @@
   display: grid;
   grid-template-columns: 8rem 8rem 8rem;
   grid-template-rows: 8rem 8rem 8rem;
+  border: 2px solid transparent;
+
 }
 
 .winnerStatus {
@@ -52,4 +54,20 @@
 .controls>*:nth-child(odd):hover {
   color: #646cff;
   cursor: pointer;
+}
+
+.board>div:nth-child(3n) {
+  border-right: none;
+}
+
+.board>div:nth-child(3n+1) {
+  border-left: none;
+}
+
+.board>div:nth-child(-n+3) {
+  border-top: none;
+}
+
+.board>div:nth-child(n+7) {
+  border-bottom: none;
 }
