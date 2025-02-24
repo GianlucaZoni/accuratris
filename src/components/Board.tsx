@@ -7,11 +7,18 @@ import { calculateWinner } from "../lib/calculateWinner"
 import { Player } from "../lib/types"
 import { setFaviconWithChar } from "../lib/setFaviconWithChar"
 import { PlayerMove } from "../lib/types"
+import { storePlayerMoves, loadPlayerMoves } from "../lib/localStorage"
 
 export function Board() {
-  const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
+  //const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
+  const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>(() => {
+    return loadPlayerMoves("playerMoves") || []
+  })
 
-  //const boardCells: (null | Player)[] = Array(9).fill(null)
+  useEffect(() => {
+    storePlayerMoves("playerMoves", playerMoves)
+  }, [playerMoves])
+
   const updatedBoardCells = playerMoves.reduce<(null | Player)[]>(
     (acc, move) => {
       const newBoard = [...acc]
