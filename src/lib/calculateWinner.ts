@@ -28,9 +28,7 @@ export function calculateWinner(cellState: (null | Player)[]): null | Player {
 
   const winningLine = WINNING_LINES.find(([a, b, c]) => {
     return cellState[a] && cellState[a] === cellState[b] && cellState[a] === cellState[c]
-  }
-
-  )
+  })
   return winningLine !== undefined ? cellState[winningLine[0]] : null
 
 }
