@@ -1,16 +1,11 @@
 import { useContext } from "react"
 
 import styles from "./TimeMachine.module.css"
-import { PlayerMove } from "../lib/types"
-import { MovesContext } from "../lib/MovesContext"
 
-interface TimeMachineProps {
-  playerMoves: PlayerMove[]
-  timeTravelTo: (moveIndex: number) => void
-}
+import { MovesContext, useMovesContext } from "./MovesContext"
 
-export function TimeMachine({ timeTravelTo }: TimeMachineProps) {
-  const playerMoves = useContext(MovesContext)
+export function TimeMachine() {
+  const { playerMoves, timeTravelTo } = useMovesContext()
   return (
     <div className={styles.history}>
       <h3>{playerMoves.length > 0 ? `Time Machine` : null}</h3>

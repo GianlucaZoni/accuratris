@@ -4,15 +4,16 @@ import { range } from "lodash"
 import styles from "./Board.module.css"
 import { Cell } from "./Cell"
 import { calculateWinner } from "../lib/calculateWinner"
-import { Player } from "../lib/types"
+import { Player, PlayerMove } from "../lib/types"
 import { setFaviconWithChar } from "../lib/setFaviconWithChar"
 import { useLocalStorage } from "../hooks/useLocalStorage"
 import { TimeMachine } from "./TimeMachine"
 import { Controls } from "./Controls"
-import { MovesContext } from "../lib/MovesContext"
+import { MovesContext } from "./MovesContext"
+import { WinnerStatus } from "./WinnerStatus"
 
 export function Board() {
-  const [playerMoves, setPlayerMoves] = useLocalStorage("playerMoves", [])
+  const [playerMoves, setPlayerMoves] = useLocalStorage<PlayerMove[]>("playerMoves", [])
 
   const updatedBoardCells = playerMoves.reduce<(null | Player)[]>(
     (acc, move) => {
@@ -47,19 +48,18 @@ export function Board() {
 
   const winner = calculateWinner(updatedBoardCells)
   const isDraw = !winner && updatedBoardCells.every((cell) => cell !== null)
-  const winnerStatus = winner ? `Player ${winner} wins!` : isDraw ? "It's a draw!" : null
 
   return (
     <>
-      <MovesContext.Provider value={playerMoves}>
+      <MovesContext.Provider value={{ playerMoves, timeTravelTo, winner, isDraw }}>
         <div className={styles.board}>
           {updatedBoardCells.map((playerMove, index) => (
             <Cell key={index} cellValue={playerMove} onCellClick={() => handleCellClick(index)} />
           ))}
         </div>
-        <div className={styles.winnerStatus}>{winnerStatus}</div>
-        <TimeMachine playerMoves={playerMoves} timeTravelTo={timeTravelTo} />
-        <Controls playerMoves={playerMoves} timeTravelTo={timeTravelTo} />
+        <WinnerStatus />
+        <TimeMachine />
+        <Controls />
       </MovesContext.Provider>
 
       {/* <pre>{JSON.stringify({ playerMoves, updatedBoardCells }, null, 2)}</pre> */}

@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
-import { storePlayerMoves, loadPlayerMoves } from "../lib/localStorage"
-import { PlayerMove } from "../lib/types"
+import { setLocalStorage, getLocalStorage } from "../lib/localStorage"
 
-export function useLocalStorage(key: string, initialValue: PlayerMove[]) {
-    const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>(() => {
-        return loadPlayerMoves("playerMoves") || initialValue
+export function useLocalStorage<T>(key: string, initialValue: T) {
+    const [value, setValue] = useState<T>(() => {
+        return getLocalStorage(key) ?? initialValue
     })
 
-    useEffect(() => {
-        storePlayerMoves(key, playerMoves)
-    }, [playerMoves])
+    function setStateLocalStorage(newValue: T) {
+        setValue(newValue)
+        setLocalStorage(key, newValue)
+    }
 
-    return [playerMoves, setPlayerMoves] as const
+    /* useEffect(() => {
+        setLocalStorage(key, value)
+    }, [value]) */
+
+    return [value, setStateLocalStorage] as const
 }

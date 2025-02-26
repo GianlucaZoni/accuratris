@@ -1,6 +1,5 @@
-import { PlayerMove } from "./types"
 
-export function storePlayerMoves(key: string, value: PlayerMove[]) {
+export function setLocalStorage<T>(key: string, value: T) {
     try {
         window.localStorage.setItem(key, JSON.stringify(value))
     } catch (error) {
@@ -8,11 +7,12 @@ export function storePlayerMoves(key: string, value: PlayerMove[]) {
     }
 }
 
-export function loadPlayerMoves(key: string) {
+export function getLocalStorage<T>(key: string): T | null {
     try {
-        const playerMoves = window.localStorage.getItem(key)
-        return playerMoves ? JSON.parse(playerMoves) : null
+        const item = window.localStorage.getItem(key)
+        return item ? JSON.parse(item) as T : null
     } catch (error) {
         console.log(error)
+        return null
     }
 }
