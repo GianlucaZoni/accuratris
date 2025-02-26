@@ -1,0 +1,13 @@
+.controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.controls>*:nth-child(odd):hover {
+    color: #646cff;
+    cursor: pointer;
+}

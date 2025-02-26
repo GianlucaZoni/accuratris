@@ -6,20 +6,12 @@ import { Cell } from "./Cell"
 import { calculateWinner } from "../lib/calculateWinner"
 import { Player } from "../lib/types"
 import { setFaviconWithChar } from "../lib/setFaviconWithChar"
-//import { PlayerMove } from "../lib/types"
-//import { storePlayerMoves, loadPlayerMoves } from "../lib/localStorage"
 import { useLocalStorage } from "../hooks/useLocalStorage"
+import { TimeMachine } from "./TimeMachine"
+import { Controls } from "./Controls"
+import { MovesContext } from "../lib/MovesContext"
 
 export function Board() {
-  //const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>([])
-  /* const [playerMoves, setPlayerMoves] = useState<PlayerMove[]>(() => {
-    return loadPlayerMoves("playerMoves") || []
-  })
-
-  useEffect(() => {
-    storePlayerMoves("playerMoves", playerMoves)
-  }, [playerMoves]) */
-
   const [playerMoves, setPlayerMoves] = useLocalStorage("playerMoves", [])
 
   const updatedBoardCells = playerMoves.reduce<(null | Player)[]>(
@@ -59,30 +51,16 @@ export function Board() {
 
   return (
     <>
-      <div className={styles.board}>
-        {updatedBoardCells.map((playerMove, index) => (
-          <Cell key={index} cellValue={playerMove} onCellClick={() => handleCellClick(index)} />
-        ))}
-      </div>
-      <div className={styles.winnerStatus}>{winnerStatus}</div>
-      <div className={styles.history}>
-        <h3>{playerMoves.length > 0 ? `Time Machine` : null}</h3>
-        <ol>
-          {playerMoves.map((move, moveIndex) => (
-            <li key={moveIndex}>
-              <button onClick={() => timeTravelTo(moveIndex)}>
-                {/* {`Travel to Turn ${moveIndex + 1} in cell ${move.pos} by ${move.player}`} */}
-                Travel to Turn {moveIndex + 1} in cell {move.pos} by {move.player}
-              </button>
-            </li>
+      <MovesContext.Provider value={playerMoves}>
+        <div className={styles.board}>
+          {updatedBoardCells.map((playerMove, index) => (
+            <Cell key={index} cellValue={playerMove} onCellClick={() => handleCellClick(index)} />
           ))}
-        </ol>
-      </div>
-      <div className={styles.controls}>
-        <div onClick={() => timeTravelTo(playerMoves.length - 1)}>Undo</div>
-        <div> | </div>
-        <div onClick={() => timeTravelTo(0)}>Retry</div>
-      </div>
+        </div>
+        <div className={styles.winnerStatus}>{winnerStatus}</div>
+        <TimeMachine playerMoves={playerMoves} timeTravelTo={timeTravelTo} />
+        <Controls playerMoves={playerMoves} timeTravelTo={timeTravelTo} />
+      </MovesContext.Provider>
 
       {/* <pre>{JSON.stringify({ playerMoves, updatedBoardCells }, null, 2)}</pre> */}
     </>

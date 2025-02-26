@@ -1,0 +1,29 @@
+.history {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 16rem;
+}
+
+.history h3 {
+    margin-bottom: 0;
+}
+
+.history ol {
+    list-style: none;
+    padding-inline-start: 0;
+}
+
+.history button {
+    font-style: inherit;
+    color: inherit;
+    width: 100%;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+}
+
+.history button:hover {
+    border-color: #646cff;
+}
