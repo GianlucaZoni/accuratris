@@ -1,6 +1,4 @@
-import { useContext } from "react"
-
-import { MovesContext, useMovesContext } from "./MovesContext"
+import { useMovesContext } from "./MovesContext"
 import styles from "./Controls.module.css"
 
 export function Controls() {

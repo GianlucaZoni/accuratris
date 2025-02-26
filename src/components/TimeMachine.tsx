@@ -1,8 +1,6 @@
-import { useContext } from "react"
-
 import styles from "./TimeMachine.module.css"
 
-import { MovesContext, useMovesContext } from "./MovesContext"
+import { useMovesContext } from "./MovesContext"
 
 export function TimeMachine() {
   const { playerMoves, timeTravelTo } = useMovesContext()
