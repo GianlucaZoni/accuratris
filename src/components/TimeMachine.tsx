@@ -1,9 +1,9 @@
 import styles from "./TimeMachine.module.css"
 
-import { useMovesContext } from "./MovesContext"
+import { useGameContext } from "../GameContext"
 
 export function TimeMachine() {
-  const { playerMoves, timeTravelTo } = useMovesContext()
+  const { playerMoves, timeTravelTo } = useGameContext()
   return (
     <div className={styles.history}>
       <h3>{playerMoves.length > 0 ? `Time Machine` : null}</h3>
@@ -11,7 +11,6 @@ export function TimeMachine() {
         {playerMoves.map((move, moveIndex) => (
           <li key={moveIndex}>
             <button onClick={() => timeTravelTo(moveIndex)}>
-              {/* {`Travel to Turn ${moveIndex + 1} in cell ${move.pos} by ${move.player}`} */}
               Travel to Turn {moveIndex + 1} in cell {move.pos} by {move.player}
             </button>
           </li>
