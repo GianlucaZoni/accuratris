@@ -1,19 +1,18 @@
 //import {useState} from 'react';
 import styles from "./Cell.module.css"
-import { useGameContext } from "../GameContext"
 import { Player } from "../lib/types"
+import { observer } from "mobx-react-lite"
+//import { observer } from "mobx-react-lite"
 
 interface CellProps {
   cellValue: Player | null
   onCellClick: () => void
 }
 
-export function Cell({ cellValue, onCellClick }: CellProps) {
-  //const { cellValue, onCellClick } = useGameContext()
-  console.log(useGameContext)
+export const Cell = observer(({ cellValue, onCellClick }: CellProps) => {
   return (
     <div className={styles.cell} onClick={onCellClick}>
       {cellValue}
     </div>
   )
-}
+})

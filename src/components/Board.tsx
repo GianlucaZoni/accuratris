@@ -3,10 +3,13 @@ import { Cell } from "./Cell"
 import { TimeMachine } from "./TimeMachine"
 import { Controls } from "./Controls"
 import { WinnerStatus } from "./WinnerStatus"
-import { useGameContext } from "../GameContext"
+//import { useGameContext } from "../GameContext"
+import { useRootStateContext } from "../state"
+import { observer } from "mobx-react-lite"
 
-export function Board() {
-  const { updatedBoardCells, handleCellClick } = useGameContext()
+export const Board = observer(() => {
+  //const { } = useGameContext()
+  const { updatedBoardCells, handleCellClick } = useRootStateContext()
 
   return (
     <>
@@ -20,4 +23,4 @@ export function Board() {
       <Controls />
     </>
   )
-}
+})
