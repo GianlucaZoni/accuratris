@@ -1,5 +1,5 @@
 import { Instance, types } from "mobx-state-tree";
-import { Player, PlayerMove } from "../lib/types";
+import { Player } from "../lib/types";
 import { createContext, useContext } from "react";
 import { calculateWinner } from "../lib/calculateWinner";
 import { isNil } from "lodash";
@@ -7,33 +7,42 @@ import { isNil } from "lodash";
 const PlayerMoveModel = types.model("PlayerMoveModel", {
     pos: types.number,
     player: types.string
+    // maybe here use literal X and O
 })
 
 const RootState = types.model("RootStateModel", {
     //playerMoves: types.optional(types.frozen<PlayerMove[]>(), []),
     playerMoves: types.optional(types.array(PlayerMoveModel), []),
     cell: types.maybe(types.frozen<Player>())
-}).views((self) => ({
-    get updatedBoardCells() {
-        return self.playerMoves.reduce<(null | Player)[]>(
-            (acc, move) => {
-                const newBoard = [...acc]
-                newBoard[move.pos] = move.player as Player
-                return newBoard
-            },
-            Array(9).fill(null)
-        )
-    },
-    get isXTurn() {
-        return self.playerMoves.length % 2 === 0
-    },
-    get winner() {
-        return calculateWinner(self.updatedBoardCells)
-    },
-    get isDraw() {
-        return !self.winner && self.updatedBoardCells.every((cell) => cell !== null)
-    },
-}))
+})
+    .views((self) => ({
+        get updatedBoardCells() {
+            return self.playerMoves.reduce<(null | Player)[]>(
+                (acc, move) => {
+                    const newBoard = [...acc]
+                    newBoard[move.pos] = move.player as Player
+                    return newBoard
+                },
+                Array(9).fill(null)
+            )
+        }
+    }))
+    .views((self) => ({
+        get isXTurn() {
+            return self.playerMoves.length % 2 === 0
+        }
+    }))
+    .views((self) => ({
+        get winner() {
+            return calculateWinner(self.updatedBoardCells)
+        }
+
+    }))
+    .views((self) => ({
+        get isDraw() {
+            return !self.winner && self.updatedBoardCells.every((cell) => cell !== null)
+        },
+    }))
     .actions((self) => ({
         timeTravelTo(moveIndex: number) {
             self.playerMoves.splice(moveIndex)
