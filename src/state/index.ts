@@ -3,16 +3,11 @@ import { Player, PlayerMove } from "../lib/types";
 import { createContext, useContext } from "react";
 import { calculateWinner } from "../lib/calculateWinner";
 import { isNil } from "lodash";
-
-/* const PlayerMoveModel = types.model("PlayerMoveModel", {
-    pos: types.number,
-    player: types.string
-    // maybe here use literal X and O
-}) */
+import { reaction } from "mobx";
+import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
 
 const RootState = types.model("RootStateModel", {
     playerMoves: types.optional(types.frozen<PlayerMove[]>(), []),
-    //playerMoves: types.optional(types.array(PlayerMoveModel), []),
     cell: types.maybe(types.frozen<Player>())
 })
     .views((self) => ({
@@ -26,7 +21,6 @@ const RootState = types.model("RootStateModel", {
                 Array(9).fill(null)
             )
         }
-
     }))
     .views((self) => ({
         get isXTurn() {
@@ -58,8 +52,24 @@ const RootState = types.model("RootStateModel", {
             //self.playerMoves.push({ pos: cellPosition, player: currentPlayer })
             self.playerMoves = [...self.playerMoves, currentPlayerMove]
         }
-
     }))
+    .actions((self) => {
+        let disposer: () => void
+        return {
+            afterCreate() {
+                self.playerMoves = getLocalStorage("savedMoves") ?? []
+                disposer = reaction(
+                    () => self.playerMoves,
+                    (playerMoves) => setLocalStorage("savedMoves", playerMoves)
+                )
+            },
+            beforeDestroy() {
+                if (disposer) {
+                    disposer()
+                }
+            }
+        }
+    })
 
 export interface RootStateInstance extends Instance<typeof RootState> { }
 

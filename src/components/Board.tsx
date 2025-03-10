@@ -6,16 +6,10 @@ import { WinnerStatus } from "./WinnerStatus"
 //import { useGameContext } from "../GameContext"
 import { useRootStateContext } from "../state"
 import { observer } from "mobx-react-lite"
-import { useEffect } from "react"
 
 export const Board = observer(() => {
   //const { } = useGameContext()
   const { updatedBoardCells, handleCellClick } = useRootStateContext()
-
-  useEffect(() => {
-    console.log("Ciao!")
-    debugger
-  }, [])
 
   return (
     <>
