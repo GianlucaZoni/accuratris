@@ -1,18 +1,18 @@
 import { Instance, types } from "mobx-state-tree";
-import { Player } from "../lib/types";
+import { Player, PlayerMove } from "../lib/types";
 import { createContext, useContext } from "react";
 import { calculateWinner } from "../lib/calculateWinner";
 import { isNil } from "lodash";
 
-const PlayerMoveModel = types.model("PlayerMoveModel", {
+/* const PlayerMoveModel = types.model("PlayerMoveModel", {
     pos: types.number,
     player: types.string
     // maybe here use literal X and O
-})
+}) */
 
 const RootState = types.model("RootStateModel", {
-    //playerMoves: types.optional(types.frozen<PlayerMove[]>(), []),
-    playerMoves: types.optional(types.array(PlayerMoveModel), []),
+    playerMoves: types.optional(types.frozen<PlayerMove[]>(), []),
+    //playerMoves: types.optional(types.array(PlayerMoveModel), []),
     cell: types.maybe(types.frozen<Player>())
 })
     .views((self) => ({
@@ -26,6 +26,7 @@ const RootState = types.model("RootStateModel", {
                 Array(9).fill(null)
             )
         }
+
     }))
     .views((self) => ({
         get isXTurn() {
@@ -45,12 +46,17 @@ const RootState = types.model("RootStateModel", {
     }))
     .actions((self) => ({
         timeTravelTo(moveIndex: number) {
-            self.playerMoves.splice(moveIndex)
+            //self.playerMoves.splice(moveIndex)
+            self.playerMoves = self.playerMoves.slice(0, moveIndex)
         },
         handleCellClick(cellPosition: number) {
             if (self.updatedBoardCells[cellPosition] !== null || self.winner || self.isDraw) return
             const currentPlayer = self.isXTurn ? "X" : "O"
-            self.playerMoves.push({ pos: cellPosition, player: currentPlayer })
+            const currentPlayerMove: PlayerMove = {
+                pos: cellPosition, player: currentPlayer
+            }
+            //self.playerMoves.push({ pos: cellPosition, player: currentPlayer })
+            self.playerMoves = [...self.playerMoves, currentPlayerMove]
         }
 
     }))
