@@ -7,19 +7,17 @@ import { autorun, reaction } from "mobx";
 import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
 import { setFaviconWithChar } from "../lib/setFaviconWithChar";
 
-function genericLifecycle(sideEffect: () => IDisposer) {
-
+const genericLifecycle = <T>(sideEffect: (self: T) => IDisposer) => (self: T) => {
     let disposer: IDisposer
-    //IDisposer in MST
-    //IReactionDisposer in Mobx
     return {
         afterCreate() {
-            disposer = sideEffect()
+            disposer = sideEffect(self)
         },
         beforeDestroy() {
             disposer?.()
         }
     }
+
 }
 
 const RootState = types.model("RootStateModel", {
@@ -67,25 +65,9 @@ const RootState = types.model("RootStateModel", {
             self.playerMoves = [...self.playerMoves, currentPlayerMove]
         }
     }))
-    /* .actions((self) => {
-        let disposer: IDisposer
-        //IDisposer in MST
-        //IReactionDisposer in Mobx
-        return {
-            afterCreate() {
-                self.playerMoves = getLocalStorage("savedMoves") ?? []
-                disposer = reaction(
-                    () => self.playerMoves,
-                    (playerMoves) => setLocalStorage("savedMoves", playerMoves)
-                )
-            },
-            beforeDestroy() {
-                disposer?.()
-            }
-        }
-    }) */
-    .actions((self) => genericLifecycle(
-        () => {
+
+    .actions(genericLifecycle(
+        (self) => {
             self.playerMoves = getLocalStorage("savedMoves") ?? []
             return reaction(
                 () => self.playerMoves,
@@ -93,23 +75,9 @@ const RootState = types.model("RootStateModel", {
         }
 
     ))
-    /* .actions((self) => {
-        let disposer: IDisposer
-        //IDisposer in MST
-        //IReactionDisposer in Mobx
-        return {
-            afterCreate() {
-                disposer = autorun(
-                    () => setFaviconWithChar(self.isXTurn ? "❌" : "⭕"),
-                )
-            },
-            beforeDestroy() {
-                disposer?.()
-            }
-        }
-    }) */
-    .actions((self) => genericLifecycle(
-        () => autorun(
+
+    .actions(genericLifecycle(
+        (self) => autorun(
             () => setFaviconWithChar(self.isXTurn ? "❌" : "⭕"),
         )))
 
