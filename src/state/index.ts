@@ -1,10 +1,26 @@
-import { Instance, types } from "mobx-state-tree";
+import { IDisposer, Instance, types } from "mobx-state-tree";
 import { Player, PlayerMove } from "../lib/types";
 import { createContext, useContext } from "react";
 import { calculateWinner } from "../lib/calculateWinner";
 import { isNil } from "lodash";
-import { reaction } from "mobx";
+import { autorun, reaction } from "mobx";
 import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
+import { setFaviconWithChar } from "../lib/setFaviconWithChar";
+
+function genericLifecycle(sideEffect: () => IDisposer) {
+
+    let disposer: IDisposer
+    //IDisposer in MST
+    //IReactionDisposer in Mobx
+    return {
+        afterCreate() {
+            disposer = sideEffect()
+        },
+        beforeDestroy() {
+            disposer?.()
+        }
+    }
+}
 
 const RootState = types.model("RootStateModel", {
     playerMoves: types.optional(types.frozen<PlayerMove[]>(), []),
@@ -31,7 +47,6 @@ const RootState = types.model("RootStateModel", {
         get winner() {
             return calculateWinner(self.updatedBoardCells)
         }
-
     }))
     .views((self) => ({
         get isDraw() {
@@ -49,12 +64,13 @@ const RootState = types.model("RootStateModel", {
             const currentPlayerMove: PlayerMove = {
                 pos: cellPosition, player: currentPlayer
             }
-            //self.playerMoves.push({ pos: cellPosition, player: currentPlayer })
             self.playerMoves = [...self.playerMoves, currentPlayerMove]
         }
     }))
-    .actions((self) => {
-        let disposer: () => void
+    /* .actions((self) => {
+        let disposer: IDisposer
+        //IDisposer in MST
+        //IReactionDisposer in Mobx
         return {
             afterCreate() {
                 self.playerMoves = getLocalStorage("savedMoves") ?? []
@@ -64,12 +80,38 @@ const RootState = types.model("RootStateModel", {
                 )
             },
             beforeDestroy() {
-                if (disposer) {
-                    disposer()
-                }
+                disposer?.()
             }
         }
-    })
+    }) */
+    .actions((self) => genericLifecycle(
+        () => {
+            self.playerMoves = getLocalStorage("savedMoves") ?? []
+            return reaction(
+                () => self.playerMoves,
+                (playerMoves) => setLocalStorage("savedMoves", playerMoves))
+        }
+
+    ))
+    /* .actions((self) => {
+        let disposer: IDisposer
+        //IDisposer in MST
+        //IReactionDisposer in Mobx
+        return {
+            afterCreate() {
+                disposer = autorun(
+                    () => setFaviconWithChar(self.isXTurn ? "❌" : "⭕"),
+                )
+            },
+            beforeDestroy() {
+                disposer?.()
+            }
+        }
+    }) */
+    .actions((self) => genericLifecycle(
+        () => autorun(
+            () => setFaviconWithChar(self.isXTurn ? "❌" : "⭕"),
+        )))
 
 export interface RootStateInstance extends Instance<typeof RootState> { }
 
